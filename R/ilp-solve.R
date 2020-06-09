@@ -21,9 +21,9 @@ solve_ilp <- function(ilp, objective = "max") {
   } else {
     max <- FALSE
   }
-  ilp_solution <- Rglpk::Rglpk_solve_LP(
+  ilp_solution <- lpsymphony::lpsymphony_solve_LP(
     obj = ilp$obj_function,
-    mat = ilp$constraints,
+    mat = slam::as.simple_triplet_matrix(ilp$constraints),
     dir = ilp$equalities,
     rhs = ilp$rhs,
     types = "B",
@@ -32,7 +32,7 @@ solve_ilp <- function(ilp, objective = "max") {
   # return the optimal value and the variable assignment
   ret_list <- list() 
   ret_list$x <- ilp_solution$solution
-  ret_list$obj <- ilp_solution$optimum
+  ret_list$obj <- ilp_solution$objval
   ## name the decision variables
   names(ret_list$x) <- colnames(ilp$constraints)
   ret_list
